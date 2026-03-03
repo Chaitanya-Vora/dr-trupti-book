@@ -4,8 +4,30 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
     <title>A Concise Textbook of Gynaecology — Dr. Trupti Mangesh Deorukhkar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Josefin+Sans:wght@200;300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <style>
-        /* ADD THIS FOR THE NEW SAMPLE MODAL */
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+        html{overflow-x:hidden;scroll-behavior:smooth}
+        body{background:#faf4ea;color:#1c0a12;font-family:'Josefin Sans',sans-serif;cursor:none;overflow-x:hidden}
+        img{display:block;max-width:100%}a{text-decoration:none}
+        :root{
+          --rose:#b5445a;--rose-lt:#d4758a;--rose-dk:#6e1f30;--rose-deep:#2a0810;
+          --gold:#c9a84c;--gold-dk:#8a6e28;
+          --cream:#faf4ea;--cream-2:#f2e8d5;--cream-3:#e8d8be;
+          --ink:#1c0a12;--ink-2:#2d1420;--muted:#8a6070;--muted2:#b89aaa;--white:#fffdf8;
+          --gborder:rgba(201,168,76,.18);--shadow-rose:rgba(181,68,90,.16);
+        }
+        #progress-bar{position:fixed;top:0;left:0;height:2px;width:0;z-index:9999;background:linear-gradient(90deg,var(--rose-dk),var(--rose),var(--gold));pointer-events:none}
+        #cursor-dot,#cursor-ring{position:fixed;border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);z-index:9500}
+        #cursor-dot{width:5px;height:5px;background:var(--rose);mix-blend-mode:multiply}
+        #cursor-ring{width:24px;height:24px;border:1px solid rgba(201,168,76,.5);z-index:9499;transition:width .35s cubic-bezier(.16,1,.3,1),height .35s,border-color .3s}
+        body.cur-hover #cursor-ring{width:50px;height:50px;border-color:var(--gold)}
+        body.cur-hover #cursor-dot{opacity:0}
+        
+        /* NEW SAMPLE MODAL STYLES */
         #sample-modal {
             display:none; position:fixed; inset:0; z-index:10000; 
             background:rgba(28,10,18,0.92); backdrop-filter:blur(10px); 
@@ -18,9 +40,94 @@
         }
         .modal-close { position:absolute; top:1rem; right:1rem; cursor:pointer; font-size:1.5rem; color:#8a6070; }
         .modal-input { width:100%; padding:0.8rem; margin:1rem 0; border:1px solid rgba(201,168,76,.3); background:white; }
+
+        /* NAV */
+        #nav{position:fixed;top:0;left:0;right:0;z-index:800;height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 3vw 0 4vw;transition:background .5s,box-shadow .5s}
+        #nav.scrolled{background:rgba(250,244,234,.96);backdrop-filter:blur(20px);box-shadow:0 1px 0 var(--gborder)}
+        .nav-brand{display:flex;flex-direction:column}
+        .nav-name{font-family:'Cormorant Garamond',serif;font-size:.98rem;color:var(--rose-dk);text-transform:uppercase;letter-spacing:.13em}
+        .nav-sub{font-size:.46rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+        .nav-links{display:flex;align-items:center;gap:2rem}
+        .nav-links a{font-size:.54rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+        .nav-cta{background:var(--rose-dk)!important;color:var(--white)!important;padding:.38rem 1.2rem!important;font-weight:600}
+
+        /* HERO */
+        .hero{position:relative;min-height:100vh;padding-top:58px;display:grid;grid-template-columns:52% 48%;overflow:hidden}
+        .hero-left{padding:4rem 6vw;display:flex;flex-direction:column;justify-content:center}
+        .hero-left > *{opacity:0;transform:translateY(18px)}
+        .ht-main{font-family:'Cormorant Garamond',serif;font-size:clamp(3rem,5vw,6rem);font-weight:700;line-height:1.1;background:linear-gradient(148deg,var(--rose-deep),var(--rose-lt));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .hero-desc{font-size:.7rem;line-height:2;color:var(--muted);max-width:370px;margin:1.5rem 0}
+        
+        .btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:.65rem;background:var(--rose);color:#fff;padding:.8rem 2rem;font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;font-weight:600;border:none;transition:0.3s}
+        .btn-secondary{font-size:.54rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-left:1.5rem}
+
+        .hero-right{position:relative;display:flex;align-items:center;justify-content:center;background:rgba(201,168,76,.04)}
+        .book-scene{perspective:1500px;opacity:0}
+        .book-3d{position:relative;transform-style:preserve-3d;transform:rotateY(-20deg) rotateX(4deg)}
+        .book-cover{width:220px;aspect-ratio:100/140;border-radius:2px 8px 8px 2px;overflow:hidden;box-shadow:-20px 22px 55px rgba(0,0,0,0.2)}
+        .book-cover img{width:100%;height:100%;object-fit:cover}
+
+        /* REVIEWS SECTION */
+        .section-testimonials{background:var(--rose-deep);padding:6rem 5vw;color:white;text-align:center}
+        .testi-card{background:rgba(255,255,255,0.05);padding:2rem;margin:1rem;border-radius:4px}
+        
+        /* FOOTER */
+        footer{background:#0c0308;padding:4rem 5vw;color:rgba(255,255,255,0.4);font-size:0.7rem}
+
+        /* MOBILE FIXES */
+        @media(max-width:880px){
+            .hero{grid-template-columns:1fr}
+            .hero-right{min-height:400px}
+            .nav-links{display:none}
+        }
     </style>
 </head>
 <body>
+
+<div id="progress-bar"></div>
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<nav id="nav">
+  <div class="nav-brand">
+    <span class="nav-name">Dr. Trupti Mangesh Deorukhkar</span>
+    <span class="nav-sub">M.D (HOM) &nbsp;·&nbsp; Gynaecology</span>
+  </div>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#reviews">Reviews</a>
+    <a href="#order" class="nav-cta">Order Now</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-left">
+    <div style="font-size:0.5rem; letter-spacing:0.5em; color:var(--gold); margin-bottom:1rem;">NEW PUBLICATION 2024</div>
+    <h1 class="ht-main">A Concise Textbook of Gynaecology</h1>
+    <p class="hero-desc">Bridging modern obstetric science with the healing depth of homeopathy. Essential for practitioners and students.</p>
+    <div>
+        <a href="#order" class="btn-primary">Order Now</a>
+        <a href="#" class="btn-secondary">Request Sample Chapter</a>
+    </div>
+  </div>
+  <div class="hero-right" id="hero-right">
+    <div class="book-scene" id="book-scene">
+      <div class="book-3d" id="book3d">
+        <div class="book-cover">
+          <img src="https://m.media-amazon.com/images/I/71R6v7S18uL._SY522_.jpg" alt="Book Cover">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-testimonials" id="reviews">
+    <h2 style="font-family:'Cormorant Garamond'; font-size:2.5rem; margin-bottom:3rem;">Practitioner Reviews</h2>
+    <div class="testi-card">
+        <p style="font-style:italic; font-size:1.1rem; margin-bottom:1rem;">"A remarkable synthesis. This book gives my students exactly what they need — clinical clarity and homeopathic depth."</p>
+        <p><strong>Dr. Meena Iyer</strong> — Professor, Mumbai</p>
+    </div>
+</section>
 
 <div id="sample-modal">
     <div class="modal-content">
@@ -32,16 +139,26 @@
     </div>
 </div>
 
+<footer>
+    <p>© 2024 Dr. Trupti Mangesh Deorukhkar. All rights reserved.</p>
+</footer>
+
 <script>
-/* 1. THE CRITIQUE FIX: MOBILE SENSITIVITY */
+/* 1. CURSOR LOGIC (Touch Check Added) */
+const dot=document.getElementById('cursor-dot'),ring=document.getElementById('cursor-ring');
 const isTouch = window.matchMedia("(pointer: coarse)").matches;
+
 if (isTouch) {
-    document.getElementById('cursor-dot').style.display = 'none';
-    document.getElementById('cursor-ring').style.display = 'none';
+    dot.style.display = 'none';
+    ring.style.display = 'none';
     document.body.style.cursor = 'auto';
+} else {
+    let mx=0,my=0,rx=0,ry=0;
+    document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;dot.style.left=mx+'px';dot.style.top=my+'px';});
+    (function tick(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(tick);})();
 }
 
-/* 2. THE CONVERSION FEATURE: SAMPLE PREVIEW */
+/* 2. MODAL LOGIC */
 const modal = document.getElementById('sample-modal');
 document.querySelector('.btn-secondary').addEventListener('click', (e) => {
     e.preventDefault();
@@ -49,13 +166,18 @@ document.querySelector('.btn-secondary').addEventListener('click', (e) => {
 });
 document.getElementById('close-modal').addEventListener('click', () => modal.style.display = 'none');
 
-/* 3. PERFORMANCE TWEAK: REDUCED MOTION */
-// Disables heavy parallax for users who prefer reduced motion
-if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    gsap.globalTimeline.clear();
-}
+/* 3. GSAP ANIMATIONS */
+gsap.registerPlugin(ScrollTrigger);
+gsap.to(".hero-left > *", { opacity: 1, y: 0, stagger: 0.1, duration: 1, ease: "power3.out" });
+gsap.to("#book-scene", { opacity: 1, duration: 1.5, delay: 0.5 });
 
-/* [Keep all your other original GSAP and Animation logic here] */
+/* 4. PROGRESS BAR */
+window.addEventListener('scroll', () => {
+    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const scrolled = (winScroll / height) * 100;
+    document.getElementById("progress-bar").style.width = scrolled + "%";
+});
 </script>
 </body>
 </html>
